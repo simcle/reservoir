@@ -38,7 +38,7 @@ const connectToADAM = async () => {
         client.setID(1)
         isConnected = true
         dataEmit.error = ''
-        startReadingData
+        startReadingData()
     } catch (error) {
         dataEmit.error = 'Gagal terhubung ke PLC'
         console.error('Gagal terhubung ke PLC ADAM', error.message)
@@ -64,6 +64,9 @@ const startReadingData = () => {
             dataEmit.p05 = pmp5.buffer.readInt16BE(0)
             const pmp6 = await client.readHoldingRegisters(2033, 1)
             dataEmit.p06 = pmp6.buffer.readInt16BE(0)
+            const lv = await client.readHoldingRegisters(2245, 1)
+            const level = (parseInt(lv.data[0]) * 100) / 100
+            dataEmit.level = level
         } catch (error) {
             console.error('Error saat membaca data', error.message)
             dataEmit.error = 'Error saat membaca data'
